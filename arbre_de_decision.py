@@ -6,9 +6,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
 
 class ArbreDecision:
-    def __init__(self):
-        donnees_data_frame = pd.read_csv ("train.txt" , delimiter=" ")
-        self.donnees_train = donnees_data_frame.values
+    def __init__(self, donnees_data_frame, donnees_data_train):
+        self.donnees_data_frame = donnees_data_frame
+        self.donnees_train = donnees_data_train
 
         np.random.shuffle(self.donnees_train)
 
@@ -82,8 +82,3 @@ class ArbreDecision:
         print ("Erreur = ", round (err,2), "%" )
         print("=====================================================")
         return self.y_predit_test
-
-arbre = ArbreDecision()
-arbre.scale()
-arbre.train()
-print(repr(arbre.predict()))
