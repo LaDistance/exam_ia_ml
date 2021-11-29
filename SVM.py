@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.svm import SVC
 from sklearn.utils.validation import column_or_1d
 from sklearn.preprocessing import StandardScaler
-class ReseauNeurones:
+class SVM:
     def __init__(self, donnees_train, donnees_eval):
         self.donnees_train = donnees_train
         self.donnees_eval = donnees_eval
@@ -41,3 +41,4 @@ class ReseauNeurones:
         self.svm.fit(self.x_train, self.y_train)
         self.y_predicted = self.svm.predict(self.x_to_predict)
         return self.y_predicted
+
