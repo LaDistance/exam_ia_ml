@@ -11,11 +11,11 @@ donnees_data_frame = pd.read_csv ("train.txt" , delimiter=" ")
 donnees_ensemble_total= donnees_data_frame.values
 print (donnees_ensemble_total)
 
-seed = random.randrange(sys.maxsize)
+#seed = random.randrange(sys.maxsize)
 # [75.0, 83.33333333333334, 89.58333333333334, 89.58333333333334, 87.5, ...]
-# seed = 2407421692064038013
+seed = 7255787564324929829
 rng = random.Random(seed)
-# rng.shuffle(donnees_ensemble_total)
+rng.shuffle(donnees_ensemble_total)
 
 nombre_lignes_base=donnees_ensemble_total.shape[0]
 nombre_colonnes_base=donnees_ensemble_total.shape[1]
