@@ -53,6 +53,6 @@ if __name__ == '__main__':
     svm = SVM(donnees_ensemble_total, donnees_eval_total)
 
     svm.scale()
-    vecteur_sortie_neurones = svm.predict()
+    vecteur_sortie_svm = svm.predict()
 
-    print(repr(vecteur_sortie_neurones))
+    print(repr(vecteur_sortie_svm))
