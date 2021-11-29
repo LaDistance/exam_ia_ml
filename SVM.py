@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.svm import SVC
 from sklearn.utils.validation import column_or_1d
 from sklearn.preprocessing import StandardScaler
@@ -42,3 +43,16 @@ class SVM:
         self.y_predicted = self.svm.predict(self.x_to_predict)
         return self.y_predicted
 
+
+if __name__ == '__main__':
+    donnees_data_frame = pd.read_csv("train.txt", delimiter=" ")
+    donnees_ensemble_total = donnees_data_frame.values
+
+    donnees_data_frame_eval = pd.read_csv("test_EVALUATION.txt", delimiter=" ")
+    donnees_eval_total = donnees_data_frame_eval.values
+    svm = SVM(donnees_ensemble_total, donnees_eval_total)
+
+    svm.scale()
+    vecteur_sortie_neurones = svm.predict()
+
+    print(repr(vecteur_sortie_neurones))
