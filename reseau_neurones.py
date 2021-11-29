@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.neural_network import MLPClassifier
 from sklearn.utils.validation import column_or_1d
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
@@ -38,8 +39,26 @@ x_train= scaler.transform (x_train)
 x_validation= scaler.transform (x_validation)
 x_test= scaler.transform (x_test)
 
-nbr_neurones=1
+nbr_neurones=5
 early_stopping = False
 nbr_iterations=20
 i=0
+metrics_scores = []
 while(i<50) and (not early_stopping):
+    model = MLPClassifier(hidden_layer_sizes=[nbr_neurones], random_state=7, max_iter = nbr_iterations)
+    model.fit(x_train, y_train)
+
+    y_predit_train = model.predict (x_train)
+    y_predit_validation = model.predict (x_validation)
+    y_predit_test = model.predict (x_test)
+
+    print("Taux de reconnaissance en test :")
+    print("----------------------")
+    metrics_scores.append(metrics.accuracy_score(y_test, y_predit_test) * 100)
+    print(metrics.accuracy_score(y_test, y_predit_test) * 100)
+    print()
+
+    i = i+1
+    nbr_iterations = nbr_iterations + 20
+
+print(metrics_scores)
