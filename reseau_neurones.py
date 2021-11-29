@@ -11,11 +11,11 @@ donnees_data_frame = pd.read_csv ("train.txt" , delimiter=" ")
 donnees_ensemble_total= donnees_data_frame.values
 print (donnees_ensemble_total)
 
-# seed = random.randrange(sys.maxsize)
+seed = random.randrange(sys.maxsize)
 # [75.0, 83.33333333333334, 89.58333333333334, 89.58333333333334, 87.5, ...]
-seed = 2637295433193598974
+# seed = 2407421692064038013
 rng = random.Random(seed)
-rng.shuffle(donnees_ensemble_total)
+# rng.shuffle(donnees_ensemble_total)
 
 nombre_lignes_base=donnees_ensemble_total.shape[0]
 nombre_colonnes_base=donnees_ensemble_total.shape[1]
@@ -74,7 +74,6 @@ while(i<50) and (not early_stopping):
     print("----------------------")
     metrics_scores.append(metrics.accuracy_score(y_test, y_predit_test) * 100)
     print(metrics.accuracy_score(y_test, y_predit_test) * 100)
-    print()
 
     if i == 0:
         tableau_erreurs_train = np.array(100 - metrics.accuracy_score(y_train, y_predit_train) * 100)
@@ -95,13 +94,15 @@ while(i<50) and (not early_stopping):
         print("erreur_validation_courante =" + str(erreur_validation_courante))
         print("erreur_validation_la_plus_basse =" + str(min(tableau_erreurs_validation)))
 
-        if (erreur_validation_courante >= 1.80 * erreur_validation_la_plus_basse):  # i>4 pour laisser le réseau s'élancer
+        if (erreur_validation_courante >= 1.10 * erreur_validation_la_plus_basse):  # i>4 pour laisser le réseau s'élancer
             print(f"Itération d'arrêt : {i} - Erreur actuelle : {erreur_validation_courante}")
             early_stopping = True;
 
     i = i+1
     nbr_iterations = nbr_iterations + 20
 
-print(metrics_scores)
-if(max(metrics_scores) >= 87):
-    print(f"Seed du random shuffle : {seed}")
+y_predicted = model.predict(x_to_predict)
+
+print(repr(y_predicted))
+
+print(seed)
