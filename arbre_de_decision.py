@@ -54,11 +54,7 @@ class ArbreDecision:
             self.y_predit_result = self.tree.predict(self.x_test)
             self.y_predit_validation = self.tree.predict(self.x_validation)
             self.y_predit_train = self.tree.predict(self.x_train)
-
-            print("Taux de reconnaissance en test :")
-            print("----------------------")
             metrics_scores.append(metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
-            print(metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
             if max_depth_courante == 0:
                 tableau_erreurs_train = np.array(100 - metrics.accuracy_score(self.y_train, self.y_predit_train) * 100)
                 tableau_erreurs_validation = np.array(100 - metrics.accuracy_score(self.y_validation, self.y_predit_validation) * 100)
@@ -75,14 +71,24 @@ class ArbreDecision:
                 erreur_validation_courante = tableau_erreurs_validation[tableau_erreurs_validation.size - 1]
                 erreur_validation_la_plus_basse = min(tableau_erreurs_validation)
 
-                print("erreur_validation_courante =" + str(erreur_validation_courante))
-                print("erreur_validation_la_plus_basse =" + str(min(tableau_erreurs_validation)))
-
                 if erreur_validation_courante >= 1.10 * erreur_validation_la_plus_basse:  # i>4 pour laisser le réseau s'élancer
-                    print(f"Itération d'arrêt : {max_depth_courante} - Erreur actuelle : {erreur_validation_courante}")
                     early_stopping = True;
 
             max_depth_courante = max_depth_courante + 1
 
     def predict(self):
         return self.y_predit_result
+
+if __name__ == '__main__':
+    donnees_data_frame = pd.read_csv("train.txt", delimiter=" ")
+    donnees_ensemble_total = donnees_data_frame.values
+
+    donnees_data_frame_eval = pd.read_csv("test_EVALUATION.txt", delimiter=" ")
+    donnees_eval_total = donnees_data_frame_eval.values
+    arbreDecision = ArbreDecision(donnees_ensemble_total, donnees_eval_total)
+
+    arbreDecision.scale()
+    arbreDecision.train()
+    vecteur_sortie_arbre = arbreDecision.predict()
+
+    print(repr(vecteur_sortie_arbre))
