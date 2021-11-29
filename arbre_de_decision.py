@@ -6,9 +6,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
 
 class ArbreDecision:
-    def __init__(self, donnees_data_frame, donnees_data_train):
-        self.donnees_data_frame = donnees_data_frame
-        self.donnees_train = donnees_data_train
+    def __init__(self, donnees_train, donnees_eval):
+        self.donnees_eval = donnees_eval
+        self.donnees_train = donnees_train
 
         np.random.shuffle(self.donnees_train)
 
@@ -24,9 +24,17 @@ class ArbreDecision:
         self.x_test = self.donnees_train[round(self.nombre_lignes_base*2/3)+1:,:self.donnees_train.shape[1]-1]
         self.y_test = self.donnees_train[round(self.nombre_lignes_base*2/3)+1:,self.donnees_train.shape[1]-1:]
 
-        self.y_predit_test = None
+        self.nombre_lignes_eval = self.donnees_eval.shape[0]
+        self.nombre_colonnes_eval = self.donnees_eval.shape[1]
+
+        self.x_to_predict = self.donnees_eval[0:round(self.nombre_lignes_eval), :self.nombre_colonnes_eval - 1]
+        self.y_to_predict = self.donnees_eval[0:round(self.nombre_lignes_eval), self.nombre_colonnes_eval - 1:]
+
+        self.y_predit_result = None
         self.y_predit_validation = None
         self.y_predit_train = None
+
+        self.tree = None
 
 
     def scale(self):
@@ -41,27 +49,27 @@ class ArbreDecision:
         metrics_scores = []
 
         while (max_depth_courante<50) and (not early_stopping) :
-            tree = DecisionTreeClassifier(max_depth=6)
-            tree.fit(self.x_train,self.y_train)
-            self.y_predit_test = tree.predict(self.x_test)
-            self.y_predit_validation = tree.predict(self.x_validation)
-            self.y_predit_train = tree.predict(self.x_train)
+            self.tree = DecisionTreeClassifier(max_depth=6)
+            self.tree.fit(self.x_train,self.y_train)
+            self.y_predit_result = self.tree.predict(self.x_test)
+            self.y_predit_validation = self.tree.predict(self.x_validation)
+            self.y_predit_train = self.tree.predict(self.x_train)
 
             print("Taux de reconnaissance en test :")
             print("----------------------")
-            metrics_scores.append(metrics.accuracy_score(self.y_test, self.y_predit_test) * 100)
-            print(metrics.accuracy_score(self.y_test, self.y_predit_test) * 100)
+            metrics_scores.append(metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
+            print(metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
             if max_depth_courante == 0:
                 tableau_erreurs_train = np.array(100 - metrics.accuracy_score(self.y_train, self.y_predit_train) * 100)
                 tableau_erreurs_validation = np.array(100 - metrics.accuracy_score(self.y_validation, self.y_predit_validation) * 100)
-                tableau_erreurs_test = np.array(100 - metrics.accuracy_score(self.y_test, self.y_predit_test) * 100)
+                tableau_erreurs_test = np.array(100 - metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
             else:
                 tableau_erreurs_train = np.append(tableau_erreurs_train,
                                                   100 - metrics.accuracy_score(self.y_train, self.y_predit_train) * 100)
                 tableau_erreurs_validation = np.append(tableau_erreurs_validation,
                                                        100 - metrics.accuracy_score(self.y_validation, self.y_predit_validation) * 100)
                 tableau_erreurs_test = np.append(tableau_erreurs_test,
-                                                 100 - metrics.accuracy_score(self.y_test, self.y_predit_test) * 100)
+                                                 100 - metrics.accuracy_score(self.y_test, self.y_predit_result) * 100)
 
             if max_depth_courante > 4:  # on voudrait pas que ça ne stoppe trop vite...
                 erreur_validation_courante = tableau_erreurs_validation[tableau_erreurs_validation.size - 1]
@@ -77,8 +85,4 @@ class ArbreDecision:
             max_depth_courante = max_depth_courante + 1
 
     def predict(self):
-        err = (1.0 -metrics.accuracy_score(self.y_test ,self.y_predit_test )) * 100
-        print(repr(self.y_predit_test))
-        print ("Erreur = ", round (err,2), "%" )
-        print("=====================================================")
-        return self.y_predit_test
+        return self.y_predit_result
